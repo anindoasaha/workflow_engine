@@ -57,10 +57,13 @@ public class WorkflowBuilderTest {
         workflowBuilder = new SimpleWorkflowBuilder("OneStepStatefulWorkflow");
         Task task1 = new StdOutTask("Default message 1");
         Task task2 = new StdOutTask("Default message 2");
+        Task task3 = new StdOutTask("Default message 3");
 
         workflowBuilder.addTask(task1)
                        .addTask(task2)
-                       .addPipe(task1, task2);
+                       .addTask(task3)
+                       .addPipe(task1, task3)
+                       .addPipe(task2, task3);
         Workflow workflow = workflowBuilder.build();
 
         WorkflowService workflowService = new WorkflowServiceImpl();
@@ -70,9 +73,12 @@ public class WorkflowBuilderTest {
         workflowInstance = workflowService.startWorkflowInstance(workflowInstance);
 
         // Execute first step
-        workflowService.executeWorkflowInstance(workflowInstance, new HashMap<>());
+        while ( !workflowInstance.getWorkflowInstanceStatus().equals(
+                                    WorkflowInstance.WORFLOW_INSTANCE_FINISHED ) ) {
+            workflowService.executeWorkflowInstance( workflowInstance,
+                                                     new HashMap<>()
+            );
+        }
 
-        // Execute second step
-        workflowService.executeWorkflowInstance(workflowInstance, new HashMap<>());
     }
 }
