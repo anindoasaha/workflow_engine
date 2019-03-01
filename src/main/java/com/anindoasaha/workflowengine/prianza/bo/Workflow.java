@@ -1,9 +1,14 @@
-package com.anindoasaha.prianza.bo;
+package com.anindoasaha.workflowengine.prianza.bo;
 
 import java.util.List;
 import java.util.Map;
 
 public interface Workflow {
+
+    default String getWorkflowType() {
+        return this.getClass().getCanonicalName();
+    }
+
     String getName();
 
     String getId();

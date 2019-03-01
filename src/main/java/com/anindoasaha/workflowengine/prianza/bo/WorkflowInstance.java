@@ -1,13 +1,13 @@
-package com.anindoasaha.prianza.bo;
+package com.anindoasaha.workflowengine.prianza.bo;
 
 import java.util.*;
 
 public class WorkflowInstance {
 
-    public static final String WORFLOW_INSTANCE_CREATED = "WORFLOW_INSTANCE_CREATED";
-    public static final String WORFLOW_INSTANCE_STARTED = "WORFLOW_INSTANCE_STARTED";
-    public static final String WORFLOW_INSTANCE_FINISHED = "WORFLOW_INSTANCE_FINISHED";
-
+    public static final String WORKFLOW_INSTANCE_CREATED = "WORKFLOW_INSTANCE_CREATED";
+    public static final String WORKFLOW_INSTANCE_STARTED = "WORKFLOW_INSTANCE_STARTED";
+    public static final String WORKFLOW_INSTANCE_IN_PROCESS = "WORKFLOW_INSTANCE_IN_PROCESS";
+    public static final String WORKFLOW_INSTANCE_FINISHED = "WORKFLOW_INSTANCE_FINISHED";
 
     private String workflowInstanceId = null;
     private String workflowInstanceName = null;
@@ -16,11 +16,13 @@ public class WorkflowInstance {
     private List<String> executedTaskIds = null;
     private final Map<String, String> instanceVariables = new HashMap<>();
 
-    private String workflowInstanceStatus = null;
-
+    private String workflowInstanceStatus;
 
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
+
+    public WorkflowInstance() {
+    }
 
     public WorkflowInstance(String workflowInstanceName, String workflowId, Map<String, String> instanceVariables) {
         this.workflowInstanceId = UUID.randomUUID().toString();
@@ -65,6 +67,10 @@ public class WorkflowInstance {
 
     public void addCurrentTaskIds(List<String> taskIds) {
         this.currentTaskIds.addAll(taskIds);
+    }
+
+    public void removeCurrentTaskId(String taskId) {
+        this.currentTaskIds.remove(taskId);
     }
 
     public void removeCurrentTaskIds(List<String> taskIds) {

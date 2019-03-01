@@ -1,14 +1,8 @@
-package com.anindoasaha.prianza.task;
+package com.anindoasaha.workflowengine.prianza.task;
 
-import com.anindoasaha.prianza.bo.WorkflowInstance;
+import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
 
-public class CommandLineTask extends AbstractTask {
-
-    private String command = null;
-
-    public CommandLineTask(String command) {
-        this.command = command;
-    }
+public class HumanTask extends AbstractTask {
 
     @Override
     public Object beforeAction(WorkflowInstance workflowInstance) {

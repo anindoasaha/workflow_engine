@@ -1,6 +1,7 @@
-- Add dependency injection
-- Test using in-memory state
-- Check task dependence
-- Control nodes
-- Task execution output to next task in addition to state updates
-- Automated task execution, based on task type and if input is required.
+- [ ] Add dependency injection
+- [X] Test using in-memory state
+- [X] Check task dependence
+- [X] Persist state between execution to file
+- [ ] Control nodes
+- [ ] Task execution output to next task in addition to state updates
+- [ ] Automated task execution, based on task type and if input is required.

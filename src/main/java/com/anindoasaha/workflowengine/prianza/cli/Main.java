@@ -1,8 +1,7 @@
-package com.anindoasaha.prianza.cli;
+package com.anindoasaha.workflowengine.prianza.cli;
 
-import com.anindoasaha.prianza.api.WorkflowService;
-import com.anindoasaha.prianza.api.impl.WorkflowServiceImpl;
-import com.anindoasaha.prianza.bo.Workflow;
+import com.anindoasaha.workflowengine.prianza.api.WorkflowService;
+import com.anindoasaha.workflowengine.prianza.api.impl.WorkflowServiceImpl;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.*;
 

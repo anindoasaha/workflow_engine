@@ -1,17 +1,23 @@
-package com.anindoasaha.prianza.task;
+package com.anindoasaha.workflowengine.prianza.task;
 
-import com.anindoasaha.prianza.bo.Task;
-import com.anindoasaha.prianza.bo.WorkflowInstance;
+import com.anindoasaha.workflowengine.prianza.bo.Task;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public abstract class AbstractTask implements Task {
     private String id = null;
-    protected Map<String, String> taskVariables = null;
+    private Map<String, String> taskVariables = new HashMap<>();
+    private String taskType = getTaskType();
 
     public AbstractTask() {
         this.id = UUID.randomUUID().toString();
+    }
+
+    @Override
+    public void updateTaskVariables(Map taskVariables) {
+        this.taskVariables.putAll(taskVariables);
     }
 
     @Override

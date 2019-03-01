@@ -1,7 +1,7 @@
-package com.anindoasaha.prianza.bo.impl;
+package com.anindoasaha.workflowengine.prianza.bo.impl;
 
-import com.anindoasaha.prianza.bo.Task;
-import com.anindoasaha.prianza.bo.Workflow;
+import com.anindoasaha.workflowengine.prianza.bo.Task;
+import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 
 import java.util.*;
 
@@ -10,8 +10,14 @@ public class SimpleWorkflow implements Workflow {
     private String name = null;
     private String description = null;
 
+    private String workflowType = getWorkflowType();
+
+
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
+
+    public SimpleWorkflow() {
+    }
 
     public SimpleWorkflow(String name, String description) {
         this.id = UUID.randomUUID().toString();

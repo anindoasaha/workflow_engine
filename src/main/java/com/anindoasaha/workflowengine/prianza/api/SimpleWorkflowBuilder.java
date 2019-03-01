@@ -1,8 +1,8 @@
-package com.anindoasaha.prianza.api;
+package com.anindoasaha.workflowengine.prianza.api;
 
-import com.anindoasaha.prianza.bo.Task;
-import com.anindoasaha.prianza.bo.Workflow;
-import com.anindoasaha.prianza.bo.impl.SimpleWorkflow;
+import com.anindoasaha.workflowengine.prianza.bo.Task;
+import com.anindoasaha.workflowengine.prianza.bo.Workflow;
+import com.anindoasaha.workflowengine.prianza.bo.impl.SimpleWorkflow;
 
 import java.util.List;
 
@@ -23,7 +23,10 @@ public class SimpleWorkflowBuilder {
     }
 
     public SimpleWorkflowBuilder addTasks(Task... tasks) {
-        return null;
+        for (Task task : tasks) {
+            workflow.addTask(task);
+        }
+        return this;
     }
 
     public SimpleWorkflowBuilder addPipe(Task source, Task destination) {
@@ -44,6 +47,9 @@ public class SimpleWorkflowBuilder {
     }
 
     public SimpleWorkflowBuilder addFanInPipe(List<Task> sourceTasks, Task destinationTask) {
-        return null;
+        for (Task sourceTask : sourceTasks) {
+            workflow.getDirectedAcyclicGraph().get(sourceTask.getId()).add(destinationTask.getId());
+        }
+        return this;
     }
 }
