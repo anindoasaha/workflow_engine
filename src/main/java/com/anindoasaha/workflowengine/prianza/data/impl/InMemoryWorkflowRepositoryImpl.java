@@ -35,6 +35,11 @@ public class InMemoryWorkflowRepositoryImpl implements WorkflowRepository {
     }
 
     @Override
+    public Map<String, String> listWorkflows() {
+        return new HashMap<>();
+    }
+
+    @Override
     public String updateWorkflowInstance(WorkflowInstance workflowInstance) {
         workflowInstanceById.put(workflowInstance.getWorkflowInstanceId(), workflowInstance);
         workflowInstanceByName.put(workflowInstance.getWorkflowInstanceName(), workflowInstance);

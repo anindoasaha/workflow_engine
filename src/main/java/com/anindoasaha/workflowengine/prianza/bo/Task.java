@@ -11,6 +11,12 @@ public interface Task<V> {
     String getId();
     void setId(String id);
 
+    public String getName();
+
+    public void setName(String name);
+
+    Map<String, String>  getTaskVariables();
+
     void updateTaskVariables(Map<String, String> taskVariables);
 
     void setTaskVariables(Map<String, String> taskVariables);

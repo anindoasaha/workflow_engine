@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface WorkflowService {
 
-    List<Workflow> listWorkflows();
+    Map<String, String> listWorkflows();
 
     Workflow getWorkflowByWorkflowId(String workflowId);
 

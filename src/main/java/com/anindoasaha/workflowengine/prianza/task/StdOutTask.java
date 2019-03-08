@@ -8,8 +8,13 @@ public class StdOutTask extends AbstractTask {
 
     public StdOutTask() {}
 
+    public StdOutTask(String name, String message) {
+        super(name);
+        this.message = message;
+    }
+
     public StdOutTask(String message) {
-        super();
+        super("StdOutTask");
         this.message = message;
     }
 

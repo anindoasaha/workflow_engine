@@ -8,10 +8,7 @@ import com.anindoasaha.workflowengine.prianza.data.WorkflowRepository;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +43,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     public void addWorkflow(Workflow workflow) {
         this.workflowById.put(workflow.getId(), workflow);
         this.workflowByName.put(workflow.getName(), workflow);
+        saveWorkflowToIndex(workflow);
         saveWorkflowToFile(workflow);
     }
 
@@ -56,6 +54,42 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
             workflow = loadWorkflowFromFile(workflowId);
         }
         return loadWorkflowFromFile(workflowId);
+    }
+
+    @Override
+    public Map<String, String> listWorkflows() {
+        return loadWorkflowFromIndex();
+    }
+
+    private Map<String, String> loadWorkflowFromIndex() {
+        Map<String, String> workflowIndex = null;
+        try {
+            Type type = new TypeToken<Map<String, String>>() { }.getType();
+
+            File file = new File("workflow_index.json");
+            if (file.createNewFile()){
+                workflowIndex = new HashMap<>();
+            } else {
+                workflowIndex = new GsonBuilder()
+                        .create()
+                        .fromJson(new FileReader(file), type);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return workflowIndex;
+    }
+
+    private void saveWorkflowToIndex(Workflow workflow) {
+        Map<String, String> workflowFromIndex = loadWorkflowFromIndex();
+        workflowFromIndex.put(workflow.getId(), workflow.getName());
+        try(FileWriter fileWriter = new FileWriter("workflow_index.json")) {
+            new GsonBuilder().setPrettyPrinting().serializeNulls()
+                    .create()
+                    .toJson(workflowFromIndex, fileWriter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void saveWorkflowToFile(Workflow workflow) {

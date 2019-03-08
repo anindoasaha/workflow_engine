@@ -3,6 +3,8 @@ package com.anindoasaha.workflowengine.prianza.bo.impl;
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SimpleWorkflow implements Workflow {
@@ -21,7 +23,7 @@ public class SimpleWorkflow implements Workflow {
 
     public SimpleWorkflow(String name, String description) {
         this.id = UUID.randomUUID().toString();
-        this.name = name;
+        this.name = name + "_" + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
         this.description = description;
         this.tasks = new HashMap<>();
         this.directedAcyclicGraph = new HashMap<>();

@@ -23,8 +23,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public List<Workflow> listWorkflows() {
-        return new ArrayList<>();
+    public Map<String, String> listWorkflows() {
+        return workflowRepository.listWorkflows();
     }
 
     @Override
@@ -131,24 +131,18 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public void executeWorkflowInstance(WorkflowInstance workflowInstance, String taskId, Map<String, String> parameters) {
         if(workflowInstance.getCurrentTaskIds().contains(taskId)) {
+            workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_IN_PROCESS);
+
             Task task = workflowInstance.getTasks().get(taskId);
             task.updateTaskVariables(parameters);
-            task.onAction(workflowInstance);
-            task.onSuccess(workflowInstance);
-            workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_IN_PROCESS);
-            workflowInstance.addExecutedTaskId(taskId);
-            workflowInstance.removeCurrentTaskId(taskId);
-            // Compute if any task can be added to currentTaskIds
-            // Add tasks which are outgoing edges to current task
-            workflowInstance.addCurrentTaskIds(workflowInstance.getDirectedAcyclicGraph().get(taskId));
 
-            // Remove tasks which still haven't met their dependencies
-            Set<Map.Entry<String, List<String>>> entries = workflowInstance.getDirectedAcyclicGraph().entrySet();
-            for(Map.Entry<String, List<String>> entry : entries) {
-                if(!workflowInstance.getExecutedTaskIds().contains(entry.getKey())) {
-                    workflowInstance.removeCurrentTaskIds(entry.getValue());
-                }
-            }
+            task.beforeAction(workflowInstance);
+
+            task.onAction(workflowInstance);
+
+            task.onSuccess(workflowInstance);
+
+            workflowInstance.proceed(taskId);
 
             // Compute if we have exhausted all tasks
             if(workflowInstance.getExecutedTaskIds().containsAll(workflowInstance.getTasks().keySet())) {
@@ -159,5 +153,4 @@ public class WorkflowServiceImpl implements WorkflowService {
             // Error code
         }
     }
-
 }
