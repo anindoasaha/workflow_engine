@@ -1,11 +1,11 @@
 package com.anindoasaha.workflowengine.prianza.workflows;
 
-import com.anindoasaha.workflowengine.prianza.api.SimpleWorkflowBuilder;
 import com.anindoasaha.workflowengine.prianza.api.WorkflowService;
 import com.anindoasaha.workflowengine.prianza.api.impl.WorkflowServiceImpl;
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
+import com.anindoasaha.workflowengine.prianza.bo.impl.SimpleWorkflowBuilder;
 import com.anindoasaha.workflowengine.prianza.data.impl.InMemoryWorkflowRepositoryImpl;
 import com.anindoasaha.workflowengine.prianza.task.StdOutTask;
 import org.junit.Test;
@@ -69,7 +69,7 @@ public class InMemoryWorkflowBuilderTest {
         Workflow workflow = workflowBuilder.build();
 
         WorkflowService workflowService = new WorkflowServiceImpl()
-                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());;
+                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());
         workflowService.addWorkflow(workflow);
 
         WorkflowInstance workflowInstance = workflowService.createWorkflowInstance(workflow, Map.of("message", "Creation Message."));
@@ -97,7 +97,7 @@ public class InMemoryWorkflowBuilderTest {
         Workflow workflow = workflowBuilder.build();
 
         WorkflowService workflowService = new WorkflowServiceImpl()
-                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());;
+                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());
         workflowService.addWorkflow(workflow);
 
         WorkflowInstance workflowInstance = workflowService.createWorkflowInstance(workflow, Map.of("message", "Creation Message."));
@@ -122,7 +122,7 @@ public class InMemoryWorkflowBuilderTest {
         Workflow workflow = workflowBuilder.build();
 
         WorkflowService workflowService = new WorkflowServiceImpl()
-                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());;
+                .setWorkflowRepository(new InMemoryWorkflowRepositoryImpl());
         workflowService.addWorkflow(workflow);
 
         WorkflowInstance workflowInstance = workflowService.createWorkflowInstance(workflow, Map.of("message", "Creation Message."));

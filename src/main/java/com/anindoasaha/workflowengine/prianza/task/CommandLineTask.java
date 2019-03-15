@@ -1,6 +1,9 @@
 package com.anindoasaha.workflowengine.prianza.task;
 
+import com.anindoasaha.workflowengine.prianza.bo.AbstractTask;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
+
+import java.util.Map;
 
 public class CommandLineTask extends AbstractTask {
 
@@ -16,7 +19,7 @@ public class CommandLineTask extends AbstractTask {
     }
 
     @Override
-    public Object onAction(WorkflowInstance workflowInstance) {
+    public Map<String, String> onAction(WorkflowInstance workflowInstance) {
         return null;
     }
 

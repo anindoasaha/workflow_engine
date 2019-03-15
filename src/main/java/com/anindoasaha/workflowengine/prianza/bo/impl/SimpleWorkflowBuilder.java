@@ -1,8 +1,7 @@
-package com.anindoasaha.workflowengine.prianza.api;
+package com.anindoasaha.workflowengine.prianza.bo.impl;
 
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
-import com.anindoasaha.workflowengine.prianza.bo.impl.SimpleWorkflow;
 
 import java.util.List;
 

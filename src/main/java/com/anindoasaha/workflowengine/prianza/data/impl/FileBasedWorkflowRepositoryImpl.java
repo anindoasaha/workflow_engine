@@ -136,7 +136,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
             workflowInstance = new GsonBuilder()
                     .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                     .create()
-                    .fromJson(new FileReader("workflow_instance_" + workflowInstanceId), WorkflowInstance.class);
+                    .fromJson(new FileReader("workflow_instance_" + workflowInstanceId + ".json"), WorkflowInstance.class);
             workflow = new Gson().fromJson(new FileReader("workflow_" + workflowInstance.getWorkflowId()),
                     Workflow.class);
             // Create task object

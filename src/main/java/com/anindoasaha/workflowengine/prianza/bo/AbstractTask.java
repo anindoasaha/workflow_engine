@@ -1,6 +1,4 @@
-package com.anindoasaha.workflowengine.prianza.task;
-
-import com.anindoasaha.workflowengine.prianza.bo.Task;
+package com.anindoasaha.workflowengine.prianza.bo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,4 +53,7 @@ public abstract class AbstractTask implements Task {
     public void setTaskVariables(Map taskVariables) {
         this.taskVariables = taskVariables;
     }
+
+    @Override
+    public abstract Map<String, String> onAction(WorkflowInstance workflowInstance);
 }

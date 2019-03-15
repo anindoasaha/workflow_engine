@@ -1,7 +1,10 @@
 package com.anindoasaha.workflowengine.prianza.task;
 
+import com.anindoasaha.workflowengine.prianza.bo.AbstractTask;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
+
+import java.util.Map;
 
 public class CompositeTask extends AbstractTask {
 
@@ -21,7 +24,7 @@ public class CompositeTask extends AbstractTask {
     }
 
     @Override
-    public Object onAction(WorkflowInstance workflowInstance) {
+    public Map<String, String> onAction(WorkflowInstance workflowInstance) {
         // Delegate to task of nested workflowInstance
         return null;
     }

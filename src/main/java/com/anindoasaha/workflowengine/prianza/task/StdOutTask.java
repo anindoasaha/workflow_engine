@@ -1,6 +1,9 @@
 package com.anindoasaha.workflowengine.prianza.task;
 
+import com.anindoasaha.workflowengine.prianza.bo.AbstractTask;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
+
+import java.util.Map;
 
 public class StdOutTask extends AbstractTask {
 
@@ -25,7 +28,7 @@ public class StdOutTask extends AbstractTask {
     }
 
     @Override
-    public Object onAction(WorkflowInstance workflowInstance) {
+    public Map<String, String> onAction(WorkflowInstance workflowInstance) {
         String message = workflowInstance.getInstanceVariables().get("message");
         System.out.println(message == null ? this.message : message + "1");
         return null;
