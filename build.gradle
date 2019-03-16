@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.anindoasaha'
-version '0.9.1-SNAPSHOT'
+version '0.9.7-SNAPSHOT'
 
 sourceCompatibility = 1.9
 

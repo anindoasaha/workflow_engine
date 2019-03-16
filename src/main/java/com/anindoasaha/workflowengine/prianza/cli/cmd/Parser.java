@@ -46,7 +46,7 @@ public class Parser {
 
         // Run task for instance
         Subparser subparserRun = subparsers.addParser("run").help("-h");
-        subparserRun.addArgument("-i", "--workflow-id").required(true);
+        subparserRun.addArgument("-i", "--instance-id").required(true);
         subparserRun.addArgument("-t", "--task-id").required(true);
         subparserRun.addArgument("-v", "--vars").nargs("*");
 

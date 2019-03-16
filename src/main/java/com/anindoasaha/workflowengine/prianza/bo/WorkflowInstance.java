@@ -28,7 +28,7 @@ public class WorkflowInstance {
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
 
-    private IdGenerator<String, String> identityGenerator = new IdGenerator<>(
+    private static IdGenerator<String, String> identityGenerator = new IdGenerator<>(
                                 n -> n + "_" + UUID.randomUUID().toString());
 
     public WorkflowInstance() {

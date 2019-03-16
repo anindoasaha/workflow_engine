@@ -2,8 +2,6 @@ package com.anindoasaha.workflowengine.prianza.bo;
 
 import com.anindoasaha.workflowengine.prianza.util.IdGenerator;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -13,7 +11,7 @@ public abstract class AbstractTask implements Task {
     private String name = null;
     private Map<String, String> taskVariables = new HashMap<>();
     private String taskType = getTaskType();
-    private IdGenerator<String, String> identityGenerator = new IdGenerator<>(
+    private static IdGenerator<String, String> identityGenerator = new IdGenerator<>(
             n -> n + "_" + UUID.randomUUID().toString());
 
     public AbstractTask() {
@@ -23,6 +21,11 @@ public abstract class AbstractTask implements Task {
     public AbstractTask(String name) {
         this.id = identityGenerator.generate(name);
         this.name = name;
+    }
+
+    public AbstractTask name(String name) {
+        this.name = name;
+        return this;
     }
 
     @Override
@@ -62,4 +65,5 @@ public abstract class AbstractTask implements Task {
 
     @Override
     public abstract Map<String, String> onAction(WorkflowInstance workflowInstance);
+
 }
