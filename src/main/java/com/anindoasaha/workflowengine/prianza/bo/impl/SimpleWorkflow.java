@@ -2,6 +2,7 @@ package com.anindoasaha.workflowengine.prianza.bo.impl;
 
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
+import com.anindoasaha.workflowengine.prianza.util.IdGenerator;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,12 +19,16 @@ public class SimpleWorkflow implements Workflow {
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
 
+    private IdGenerator<String, String> identityGenerator = new IdGenerator<>(
+            n -> n + "_" + UUID.randomUUID().toString());
+
+
     public SimpleWorkflow() {
     }
 
     public SimpleWorkflow(String name, String description) {
-        this.id = UUID.randomUUID().toString();
-        this.name = name + "_" + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        this.id = identityGenerator.generate(name);
+        this.name = name;
         this.description = description;
         this.tasks = new HashMap<>();
         this.directedAcyclicGraph = new HashMap<>();

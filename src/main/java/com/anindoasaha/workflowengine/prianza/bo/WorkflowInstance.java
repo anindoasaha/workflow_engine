@@ -1,8 +1,11 @@
 package com.anindoasaha.workflowengine.prianza.bo;
 
+import com.anindoasaha.workflowengine.prianza.util.IdGenerator;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class WorkflowInstance {
 
@@ -25,11 +28,14 @@ public class WorkflowInstance {
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
 
+    private IdGenerator<String, String> identityGenerator = new IdGenerator<>(
+                                n -> n + "_" + UUID.randomUUID().toString());
+
     public WorkflowInstance() {
     }
 
     public WorkflowInstance(String workflowInstanceName, String workflowId, Map<String, String> instanceVariables) {
-        this.workflowInstanceId = UUID.randomUUID().toString();
+        this.workflowInstanceId = identityGenerator.generate(workflowInstanceName);
         this.workflowInstanceName = workflowInstanceName;
         this.workflowId = workflowId;
         this.currentTaskIds = new ArrayList<>();

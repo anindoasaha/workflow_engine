@@ -27,11 +27,16 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     private Properties properties = null;
 
     static {
-        defaultProperties.setProperty("BASE_PATH", ".");
+        defaultProperties.setProperty("BASE_PATH", System.getProperty("user.home", ".") + File.separatorChar + ".workflow");
     }
 
     public FileBasedWorkflowRepositoryImpl() {
         this.properties = new Properties(defaultProperties);
+        initProperties();
+    }
+
+    private void initProperties() {
+        boolean success = new java.io.File(properties.getProperty("BASE_PATH")).mkdirs();
     }
 
     public FileBasedWorkflowRepositoryImpl(Properties properties) {
@@ -66,7 +71,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
         try {
             Type type = new TypeToken<Map<String, String>>() { }.getType();
 
-            File file = new File("workflow_index.json");
+            File file = new File(properties.getProperty("BASE_PATH"), "workflow_index.json");
             if (file.createNewFile()){
                 workflowIndex = new HashMap<>();
             } else {
@@ -83,7 +88,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     private void saveWorkflowToIndex(Workflow workflow) {
         Map<String, String> workflowFromIndex = loadWorkflowFromIndex();
         workflowFromIndex.put(workflow.getId(), workflow.getName());
-        try(FileWriter fileWriter = new FileWriter("workflow_index.json")) {
+        try(FileWriter fileWriter = new FileWriter(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_index.json")) {
             new GsonBuilder().setPrettyPrinting().serializeNulls()
                     .create()
                     .toJson(workflowFromIndex, fileWriter);
@@ -93,7 +98,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     }
 
     private void saveWorkflowToFile(Workflow workflow) {
-        try(FileWriter fileWriter = new FileWriter("workflow_" + workflow.getId() + ".json")) {
+        try(FileWriter fileWriter = new FileWriter(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflow.getId() + ".json")) {
             SimpleWorkflow simpleWorkflow = (SimpleWorkflow) workflow;
             new GsonBuilder().setPrettyPrinting().serializeNulls()
                     .create()
@@ -104,7 +109,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     }
 
     private void saveInstanceToFile(WorkflowInstance workflowInstance) {
-        try(FileWriter fileWriter = new FileWriter("workflow_instance_" + workflowInstance.getWorkflowInstanceId() + ".json")) {
+        try(FileWriter fileWriter = new FileWriter(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_instance_" + workflowInstance.getWorkflowInstanceId() + ".json")) {
             new GsonBuilder().setPrettyPrinting().serializeNulls()
                     .create()
                     .toJson(workflowInstance, fileWriter);
@@ -120,7 +125,7 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
                     .registerTypeAdapter(Workflow.class, new WorkflowJsonDeserializer())
                     .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                     .create()
-                    .fromJson(new FileReader("workflow_" + workflowId + ".json"),
+                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowId + ".json"),
                     Workflow.class);
             // Create task object
         } catch (FileNotFoundException e) {
@@ -136,8 +141,9 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
             workflowInstance = new GsonBuilder()
                     .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                     .create()
-                    .fromJson(new FileReader("workflow_instance_" + workflowInstanceId + ".json"), WorkflowInstance.class);
-            workflow = new Gson().fromJson(new FileReader("workflow_" + workflowInstance.getWorkflowId()),
+                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_instance_" + workflowInstanceId + ".json"), WorkflowInstance.class);
+            workflow = new Gson()
+                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowInstance.getWorkflowId()),
                     Workflow.class);
             // Create task object
             workflowInstance.setTasks(workflow.getTasks());

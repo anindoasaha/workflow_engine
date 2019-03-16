@@ -6,11 +6,7 @@ import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
 import com.anindoasaha.workflowengine.prianza.data.WorkflowRepository;
 import com.anindoasaha.workflowengine.prianza.data.impl.FileBasedWorkflowRepositoryImpl;
-import com.anindoasaha.workflowengine.prianza.data.impl.InMemoryWorkflowRepositoryImpl;
-import com.anindoasaha.workflowengine.prianza.task.StdOutTask;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class WorkflowServiceImpl implements WorkflowService {
@@ -79,7 +75,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public WorkflowInstance createWorkflowInstance(Workflow workflow, Map<String, String> instanceVariables) {
         WorkflowInstance workflowInstance = new WorkflowInstance(
-                                workflow.getName() + "_" + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME),
+                                                    workflow.getName(),
                                                     workflow.getId(),
                                                     instanceVariables);
         workflowInstance.setTasks(workflow.getTasks());
