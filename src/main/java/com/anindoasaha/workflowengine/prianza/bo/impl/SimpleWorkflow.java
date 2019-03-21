@@ -17,6 +17,8 @@ public class SimpleWorkflow implements Workflow {
     private Map<String, Task> tasks = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
 
+    private Map<String, String> initVariables = null;
+
     private static IdGenerator<String, String> identityGenerator = new IdGenerator<>(
             n -> n + "_" + UUID.randomUUID().toString());
 
@@ -30,6 +32,7 @@ public class SimpleWorkflow implements Workflow {
         this.description = description;
         this.tasks = new HashMap<>();
         this.directedAcyclicGraph = new HashMap<>();
+        this.initVariables = new HashMap<>();
     }
 
     @Override
@@ -77,5 +80,13 @@ public class SimpleWorkflow implements Workflow {
 
     public void setDirectedAcyclicGraph(Map<String, List<String>> directedAcyclicGraph) {
         this.directedAcyclicGraph = directedAcyclicGraph;
+    }
+
+    public Map<String, String> getInitVariables() {
+        return initVariables;
+    }
+
+    public void setInitVariables(Map<String, String> initVariables) {
+        this.initVariables = initVariables;
     }
 }

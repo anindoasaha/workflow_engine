@@ -4,6 +4,7 @@ import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 
 import java.util.List;
+import java.util.Map;
 
 public class SimpleWorkflowBuilder {
     private SimpleWorkflow workflow = null;
@@ -49,6 +50,11 @@ public class SimpleWorkflowBuilder {
         for (Task sourceTask : sourceTasks) {
             workflow.getDirectedAcyclicGraph().get(sourceTask.getId()).add(destinationTask.getId());
         }
+        return this;
+    }
+
+    public SimpleWorkflowBuilder initVariables(Map<String, String> initVariables) {
+        workflow.setInitVariables(initVariables);
         return this;
     }
 }
