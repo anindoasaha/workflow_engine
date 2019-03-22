@@ -68,31 +68,52 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
 
     private Map<String, String> loadWorkflowFromIndex() {
         Map<String, String> workflowIndex = null;
-        try {
-            Type type = new TypeToken<Map<String, String>>() { }.getType();
 
+        FileReader fileReader = null;
+        try {
             File file = new File(properties.getProperty("BASE_PATH"), "workflow_index.json");
             if (file.createNewFile()){
+                System.out.println("If");
                 workflowIndex = new HashMap<>();
             } else {
+                System.out.println("Else");
+                fileReader = new FileReader(file);
+                Type type = new TypeToken<Map<String, String>>() { }.getType();
                 workflowIndex = new GsonBuilder()
                         .create()
-                        .fromJson(new FileReader(file), type);
+                        .fromJson(fileReader, type);
+                if (workflowIndex == null) {
+                    workflowIndex = new HashMap<>();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            try {
+                if (fileReader != null) {
+                    fileReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return workflowIndex;
     }
 
     private void saveWorkflowToIndex(Workflow workflow) {
         Map<String, String> workflowFromIndex = loadWorkflowFromIndex();
-        workflowFromIndex.put(workflow.getId(), workflow.getName());
         try(FileWriter fileWriter = new FileWriter(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_index.json")) {
+            workflowFromIndex.put(workflow.getId(), workflow.getName());
             new GsonBuilder().setPrettyPrinting().serializeNulls()
                     .create()
                     .toJson(workflowFromIndex, fileWriter);
-        } catch (IOException e) {
+        }
+        catch (RuntimeException e) {
+            System.out.println("workflow: " + workflow);
+            System.out.println("workflowFromIndex: " + workflowFromIndex);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -120,15 +141,15 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
 
     private Workflow loadWorkflowFromFile(String workflowId) {
         Workflow workflow = null;
-        try {
+        try(FileReader fileReader = new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowId + ".json")) {
+
             workflow = new GsonBuilder()
                     .registerTypeAdapter(Workflow.class, new WorkflowJsonDeserializer())
                     .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                     .create()
-                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowId + ".json"),
+                    .fromJson(fileReader,
                     Workflow.class);
-            // Create task object
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return workflow;
@@ -137,20 +158,24 @@ public class FileBasedWorkflowRepositoryImpl implements WorkflowRepository {
     private WorkflowInstance loadInstanceFromFile(String workflowInstanceId) {
         WorkflowInstance workflowInstance = null;
         Workflow workflow = null;
-        try {
+        try(FileReader workflowInstanceFileReader = new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_instance_" + workflowInstanceId + ".json")) {
+
             workflowInstance = new GsonBuilder()
                     .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                     .create()
-                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_instance_" + workflowInstanceId + ".json"), WorkflowInstance.class);
-            workflow = new GsonBuilder()
-                    .registerTypeAdapter(Workflow.class, new WorkflowJsonDeserializer())
-                    .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
-                    .create()
-                    .fromJson(new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowInstance.getWorkflowId() + ".json"),
-                    Workflow.class);
+                    .fromJson(workflowInstanceFileReader, WorkflowInstance.class);
+
+            try(FileReader workflowFileReader = new FileReader(properties.getProperty("BASE_PATH") + File.separatorChar + "workflow_" + workflowInstance.getWorkflowId() + ".json")) {
+                workflow = new GsonBuilder()
+                        .registerTypeAdapter(Workflow.class, new WorkflowJsonDeserializer())
+                        .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
+                        .create()
+                        .fromJson(workflowFileReader,
+                                Workflow.class);
+            }
             // Create task object
             workflowInstance.setTasks(workflow.getTasks());
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return workflowInstance;
