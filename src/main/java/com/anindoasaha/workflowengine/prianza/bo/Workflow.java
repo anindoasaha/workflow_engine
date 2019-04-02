@@ -3,15 +3,12 @@ package com.anindoasaha.workflowengine.prianza.bo;
 import java.util.List;
 import java.util.Map;
 
-public interface Workflow {
+public interface Workflow extends Entity {
 
+    @Deprecated
     default String getWorkflowType() {
         return this.getClass().getCanonicalName();
     }
-
-    String getName();
-
-    String getId();
 
     public Map<String, Task> getTasks();
 

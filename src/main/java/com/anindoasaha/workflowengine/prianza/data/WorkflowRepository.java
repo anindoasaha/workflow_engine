@@ -14,10 +14,13 @@ public interface WorkflowRepository {
 
     Map<String, String> listWorkflows();
 
+    Map<String, String> listWorkflowInstances();
 
     String updateWorkflowInstance(WorkflowInstance workflowInstance);
 
     WorkflowInstance getWorkflowInstance(String workflowInstanceId);
 
     String deleteWorkflowInstance(String workflowInstanceId);
+
+
 }

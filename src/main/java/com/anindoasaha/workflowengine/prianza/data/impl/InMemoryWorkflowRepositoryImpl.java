@@ -24,8 +24,8 @@ public class InMemoryWorkflowRepositoryImpl implements WorkflowRepository {
 
     @Override
     public String addWorkflowInstance(WorkflowInstance workflowInstance) {
-        workflowInstanceById.put(workflowInstance.getWorkflowInstanceId(), workflowInstance);
-        workflowInstanceByName.put(workflowInstance.getWorkflowInstanceName(), workflowInstance);
+        workflowInstanceById.put(workflowInstance.getId(), workflowInstance);
+        workflowInstanceByName.put(workflowInstance.getName(), workflowInstance);
         return null;
     }
 
@@ -41,8 +41,8 @@ public class InMemoryWorkflowRepositoryImpl implements WorkflowRepository {
 
     @Override
     public String updateWorkflowInstance(WorkflowInstance workflowInstance) {
-        workflowInstanceById.put(workflowInstance.getWorkflowInstanceId(), workflowInstance);
-        workflowInstanceByName.put(workflowInstance.getWorkflowInstanceName(), workflowInstance);
+        workflowInstanceById.put(workflowInstance.getId(), workflowInstance);
+        workflowInstanceByName.put(workflowInstance.getName(), workflowInstance);
         return null;
     }
 
@@ -55,7 +55,7 @@ public class InMemoryWorkflowRepositoryImpl implements WorkflowRepository {
     public String deleteWorkflowInstance(String workflowInstanceId) {
         WorkflowInstance workflowInstance = workflowInstanceById.get(workflowInstanceId);
         workflowInstanceById.remove(workflowInstanceId);
-        workflowInstanceByName.remove(workflowInstance.getWorkflowInstanceName());
+        workflowInstanceByName.remove(workflowInstance.getName());
         return null;
     }
 

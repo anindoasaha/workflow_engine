@@ -1,19 +1,27 @@
 package com.anindoasaha.workflowengine.prianza.api.impl;
 
+import com.anindoasaha.workflowengine.prianza.api.WorkflowInstanceEventListener;
 import com.anindoasaha.workflowengine.prianza.api.WorkflowService;
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
+import com.anindoasaha.workflowengine.prianza.bo.exception.WorkflowException;
 import com.anindoasaha.workflowengine.prianza.data.WorkflowRepository;
-import com.anindoasaha.workflowengine.prianza.data.impl.FileBasedWorkflowRepositoryImpl;
+import com.anindoasaha.workflowengine.prianza.data.impl.LocalFileBasedWorkflowRepositoryImpl;
+import com.anindoasaha.workflowengine.prianza.bo.event.WorkflowInstanceFinishEvent;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import java.util.*;
 
+@Singleton
 public class WorkflowServiceImpl implements WorkflowService {
 
-    private WorkflowRepository workflowRepository = new FileBasedWorkflowRepositoryImpl();
 
-    public WorkflowServiceImpl setWorkflowRepository(WorkflowRepository workflowRepository) {
+    private WorkflowRepository workflowRepository = new LocalFileBasedWorkflowRepositoryImpl();
+
+    @Inject
+    public WorkflowService setWorkflowRepository(WorkflowRepository workflowRepository) {
         this.workflowRepository = workflowRepository;
         return this;
     }
@@ -21,6 +29,11 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public Map<String, String> listWorkflows() {
         return workflowRepository.listWorkflows();
+    }
+
+    @Override
+    public Map<String, String> listWorkflowInstances() {
+        return workflowRepository.listWorkflowInstances();
     }
 
     @Override
@@ -69,7 +82,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public String createWorkflowInstance(String workflowId, Map<String, String> instanceVariables) {
         Workflow workflow = getWorkflowByWorkflowId(workflowId);
-        return createWorkflowInstance(workflow, instanceVariables).getWorkflowInstanceId();
+        return createWorkflowInstance(workflow, instanceVariables).getId();
     }
 
     @Override
@@ -81,14 +94,25 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowInstance.setTasks(workflow.getTasks());
         workflowInstance.setDirectedAcyclicGraph(workflow.getDirectedAcyclicGraph());
         workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_CREATED);
-        workflowRepository.addWorkflowInstance(workflowInstance);
+        if (workflowInstance.getInstanceType().equals(WorkflowInstance.InstanceType.WORKFLOW_INSTANCE_MAIN)) {
+            workflowRepository.addWorkflowInstance(workflowInstance);
+        } else {
+            // TODO Add to index with path
+        }
+        return workflowInstance;
+    }
+
+    @Override
+    public WorkflowInstance updateWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> instanceVariables) {
+        workflowInstance.getInstanceVariables().putAll(instanceVariables);
+        workflowRepository.updateWorkflowInstance(workflowInstance);
         return workflowInstance;
     }
 
     @Override
     public String startWorkflowInstance(String workflowInstanceId) {
         WorkflowInstance workflowInstance = getWorkflowInstanceByWorkflowInstanceId(workflowInstanceId);
-        return startWorkflowInstance(workflowInstance).getWorkflowInstanceId();
+        return startWorkflowInstance(workflowInstance).getId();
     }
 
     @Override
@@ -131,22 +155,29 @@ public class WorkflowServiceImpl implements WorkflowService {
 
             Task task = workflowInstance.getTasks().get(taskId);
             task.updateTaskVariables(parameters);
-
-            task.beforeAction(workflowInstance);
-
-            task.onAction(workflowInstance);
-
-            task.onSuccess(workflowInstance);
-
-            workflowInstance.proceed(taskId);
+            try {
+                task.beforeAction(workflowInstance);
+                task.onAction(workflowInstance);
+                task.onSuccess(workflowInstance);
+            }
+            catch (Exception e) {
+                task.onError(workflowInstance);
+            }
+            finally {
+                task.afterAction(workflowInstance);
+            }
 
             // Compute if we have exhausted all tasks
             if(workflowInstance.getExecutedTaskIds().containsAll(workflowInstance.getTasks().keySet())) {
                 workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_FINISHED);
+                // Call listeners
+                for (WorkflowInstanceEventListener listener : workflowInstance.getEventListeners()) {
+                    listener.onInstanceFinish(new WorkflowInstanceFinishEvent(workflowInstance));
+                }
             }
             workflowRepository.updateWorkflowInstance(workflowInstance);
         } else {
-            // Error code
+            throw new WorkflowException("No such task id: "+ taskId + " for instance: " + workflowInstance.getId());
         }
     }
 }

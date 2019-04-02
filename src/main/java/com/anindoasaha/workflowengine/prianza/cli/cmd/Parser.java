@@ -5,6 +5,7 @@ import com.anindoasaha.workflowengine.prianza.api.impl.WorkflowServiceImpl;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.*;
 
 import java.util.HashMap;
@@ -29,11 +30,18 @@ public class Parser {
                 .description("valid subcommands")
                 .metavar("COMMAND");
 
+        // Run workflow engine as a server
+        Subparser subparserServer = subparsers.addParser("server").defaultHelp(true).help("-h");
+
         // Load default workflow
         Subparser subparserLoad = subparsers.addParser("load").defaultHelp(true).help("-h");
 
         // List all workflows
         Subparser subparserList = subparsers.addParser("list").defaultHelp(true).help("-h");
+        subparserList.addArgument("-w", "--workflow-id")
+                .action(Arguments.storeTrue()).required(false);
+        subparserList.addArgument("-i", "--instance-id")
+                .action(Arguments.storeTrue()).required(false);
 
         // Create a new workflow instance
         Subparser subparserCreate = subparsers.addParser("create").defaultHelp(true).help("-h");
@@ -64,15 +72,27 @@ public class Parser {
             WorkflowInstance instance = null;
             List<String> vars = null;
             switch (namespace.getString("subparser")) {
+                case "server":
+                    // TODO start gRPC server which delegates all calls to WorkflowServiceImpl
+                    break;
                 case "load":
                     workflowService.addWorkflow(workflow);
                     System.out.println("Workflow loaded with ID: " + workflow.getId());
                     break;
                 case "list":
-                    Map<String, String> workflows = workflowService.listWorkflows();
-                    System.out.println("Workflows: ");
-                    for (Map.Entry<String, String> entry : workflows.entrySet()) {
-                        System.out.println(entry.getValue() + " : " + entry.getKey());
+                    Boolean instanceId = namespace.getBoolean("instance_id");
+                    if (instanceId != null && instanceId) {
+                        Map<String, String> workflows = workflowService.listWorkflows();
+                        System.out.println("Workflows: ");
+                        for (Map.Entry<String, String> entry : workflows.entrySet()) {
+                            System.out.println(entry.getValue() + " : " + entry.getKey());
+                        }
+                    } else {
+                        Map<String, String> workflows = workflowService.listWorkflows();
+                        System.out.println("Workflows: ");
+                        for (Map.Entry<String, String> entry : workflows.entrySet()) {
+                            System.out.println(entry.getValue() + " : " + entry.getKey());
+                        }
                     }
                     break;
                 case "create":

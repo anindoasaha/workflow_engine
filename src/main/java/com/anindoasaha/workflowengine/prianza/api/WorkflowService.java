@@ -10,6 +10,8 @@ public interface WorkflowService {
 
     Map<String, String> listWorkflows();
 
+    Map<String, String> listWorkflowInstances();
+
     Workflow getWorkflowByWorkflowId(String workflowId);
 
     Workflow getWorkflowByWorkflowName(String workflowName);
@@ -29,6 +31,8 @@ public interface WorkflowService {
     String createWorkflowInstance(String workflowId, Map<String, String> instanceVariables);
 
     WorkflowInstance createWorkflowInstance(Workflow workflow, Map<String, String> instanceVariables);
+
+    WorkflowInstance updateWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> instanceVariables);
 
     String startWorkflowInstance(String workflowInstanceId);
 

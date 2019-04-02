@@ -11,8 +11,6 @@ public abstract class AbstractTask implements Task {
     private String name = null;
     private Map<String, String> taskVariables = new HashMap<>();
     private String taskType = getTaskType();
-    private static IdGenerator<String, String> identityGenerator = new IdGenerator<>(
-            n -> n + "_" + UUID.randomUUID().toString());
 
     public AbstractTask() {
         this(null);
