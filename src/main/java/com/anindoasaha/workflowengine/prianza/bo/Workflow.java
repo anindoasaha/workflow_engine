@@ -14,6 +14,10 @@ public interface Workflow extends Entity {
 
     public void setTasks(Map<String, Task> tasks);
 
+    public Map<String, TaskExecutionInfo> getTaskExecutionInfo();
+
+    public void setTaskExecutionInfo(Map<String, TaskExecutionInfo> taskExecutionInfo);
+
     public Map<String, List<String>> getDirectedAcyclicGraph();
 
     public void setDirectedAcyclicGraph(Map<String, List<String>> directedAcyclicGraph);

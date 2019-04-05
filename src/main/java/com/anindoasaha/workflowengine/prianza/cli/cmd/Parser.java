@@ -56,6 +56,7 @@ public class Parser {
         Subparser subparserRun = subparsers.addParser("run").help("-h");
         subparserRun.addArgument("-i", "--instance-id").required(true);
         subparserRun.addArgument("-t", "--task-id").required(true);
+        subparserRun.addArgument("-s", "--signal").required(false);
         subparserRun.addArgument("-v", "--vars").nargs("*");
 
         Namespace namespace = null;

@@ -7,7 +7,8 @@ import java.util.Map;
 
 public class StdOutTask extends AbstractTask {
 
-    String message = null;
+    private String message = null;
+    private int invocationCount = 0;
 
     public StdOutTask() {}
 
@@ -29,16 +30,14 @@ public class StdOutTask extends AbstractTask {
 
     @Override
     public Map<String, String> onAction(WorkflowInstance workflowInstance) {
-        String message = workflowInstance.getInstanceVariables().get("message");
-        System.out.println(message == null ? this.message : message + "1");
+        String message = getTaskVariables().get("message");
+        System.out.println(message == null ? this.message : message);
+        System.out.println(++this.invocationCount);
         return null;
-
     }
 
     @Override
     public Object onSuccess(WorkflowInstance workflowInstance) {
-        workflowInstance.getInstanceVariables().put("message",
-                workflowInstance.getInstanceVariables().getOrDefault("message", "Modified message.") + "1");
         return null;
     }
 

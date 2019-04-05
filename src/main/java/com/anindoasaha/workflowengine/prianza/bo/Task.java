@@ -38,7 +38,6 @@ public interface Task<K, V> extends Entity {
      * @return
      */
     default V afterAction(final WorkflowInstance workflowInstance) {
-        workflowInstance.proceed(getId());
         return null;
     }
 

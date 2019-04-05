@@ -3,13 +3,14 @@ package com.anindoasaha.workflowengine.prianza.data.impl;
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
-import com.anindoasaha.workflowengine.prianza.bo.impl.SimpleWorkflow;
+import com.anindoasaha.workflowengine.prianza.bo.impl.simple.SimpleWorkflow;
 import com.anindoasaha.workflowengine.prianza.data.WorkflowRepository;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

@@ -30,6 +30,7 @@ public class WorkflowInstance implements Entity {
     private String workflowInstanceStatus;
 
     private Map<String, Task> tasks = null;
+    private Map<String, TaskExecutionInfo> taskExecutionInfo = null;
     private Map<String, List<String>> directedAcyclicGraph = null;
 
     private List<WorkflowInstanceEventListener> eventListeners = null;
@@ -162,6 +163,15 @@ public class WorkflowInstance implements Entity {
 
     public void setTasks(Map<String, Task> tasks) {
         this.tasks = tasks;
+    }
+
+
+    public Map<String, TaskExecutionInfo> getTaskExecutionInfo() {
+        return taskExecutionInfo;
+    }
+
+    public void setTaskExecutionInfo(Map<String, TaskExecutionInfo> taskExecutionInfo) {
+        this.taskExecutionInfo = taskExecutionInfo;
     }
 
     public Map<String, List<String>> getDirectedAcyclicGraph() {

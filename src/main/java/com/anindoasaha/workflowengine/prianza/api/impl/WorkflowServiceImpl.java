@@ -6,6 +6,7 @@ import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
 import com.anindoasaha.workflowengine.prianza.bo.exception.WorkflowException;
+import com.anindoasaha.workflowengine.prianza.bo.impl.simple.ExecutionType;
 import com.anindoasaha.workflowengine.prianza.data.WorkflowRepository;
 import com.anindoasaha.workflowengine.prianza.data.impl.LocalFileBasedWorkflowRepositoryImpl;
 import com.anindoasaha.workflowengine.prianza.bo.event.WorkflowInstanceFinishEvent;
@@ -92,12 +93,14 @@ public class WorkflowServiceImpl implements WorkflowService {
                                                     workflow.getId(),
                                                     instanceVariables);
         workflowInstance.setTasks(workflow.getTasks());
+        workflowInstance.setTaskExecutionInfo(workflow.getTaskExecutionInfo());
         workflowInstance.setDirectedAcyclicGraph(workflow.getDirectedAcyclicGraph());
         workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_CREATED);
         if (workflowInstance.getInstanceType().equals(WorkflowInstance.InstanceType.WORKFLOW_INSTANCE_MAIN)) {
             workflowRepository.addWorkflowInstance(workflowInstance);
         } else {
             // TODO Add to index with path
+            workflowRepository.addWorkflowInstance(workflowInstance);
         }
         return workflowInstance;
     }
@@ -139,7 +142,12 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     public void executeWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> parameters) {
-        executeWorkflowInstance(workflowInstance, workflowInstance.getCurrentTaskIds().get(0), parameters);
+        try {
+            executeWorkflowInstance(workflowInstance, workflowInstance.getCurrentTaskIds().get(0), parameters);
+        }
+        catch (Exception e) {
+            System.out.println("ERROR");
+        }
     }
 
     @Override
@@ -167,17 +175,66 @@ public class WorkflowServiceImpl implements WorkflowService {
                 task.afterAction(workflowInstance);
             }
 
-            // Compute if we have exhausted all tasks
-            if(workflowInstance.getExecutedTaskIds().containsAll(workflowInstance.getTasks().keySet())) {
-                workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_FINISHED);
-                // Call listeners
-                for (WorkflowInstanceEventListener listener : workflowInstance.getEventListeners()) {
-                    listener.onInstanceFinish(new WorkflowInstanceFinishEvent(workflowInstance));
+            // Execute and proceed
+            if(workflowInstance.getTaskExecutionInfo().get(taskId).getExecutionType() == ExecutionType.EXECUTE_AND_PROCEED) {
+                workflowInstance.proceed(taskId);
+
+                // Compute if we have exhausted all tasks
+                if(workflowInstance.getExecutedTaskIds().containsAll(workflowInstance.getTasks().keySet())) {
+                    workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_FINISHED);
+                    // Call listeners
+                    for (WorkflowInstanceEventListener listener : workflowInstance.getEventListeners()) {
+                        listener.onInstanceFinish(new WorkflowInstanceFinishEvent(workflowInstance));
+                    }
                 }
             }
             workflowRepository.updateWorkflowInstance(workflowInstance);
         } else {
             throw new WorkflowException("No such task id: "+ taskId + " for instance: " + workflowInstance.getId());
         }
+    }
+
+    @Override
+    public void proceedWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> parameters) {
+        proceedWorkflowInstance(workflowInstance, workflowInstance.getCurrentTaskIds().get(0), parameters);
+    }
+
+    public void proceedWorkflowInstance(WorkflowInstance workflowInstance, String taskId,  Map<String, String> parameters) {
+        if(workflowInstance.getCurrentTaskIds().contains(taskId)) {
+            workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_IN_PROCESS);
+
+            // It was waiting for a manual push
+            if(workflowInstance.getTaskExecutionInfo().get(taskId).getExecutionType() == ExecutionType.EXECUTE_AND_WAIT) {
+                //  Call proceed on instance
+                workflowInstance.proceed(taskId);
+
+                // Compute if we have exhausted all tasks
+                if(workflowInstance.getExecutedTaskIds().containsAll(workflowInstance.getTasks().keySet())) {
+                    workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_FINISHED);
+                    // Call listeners
+                    for (WorkflowInstanceEventListener listener : workflowInstance.getEventListeners()) {
+                        listener.onInstanceFinish(new WorkflowInstanceFinishEvent(workflowInstance));
+                    }
+                }
+                workflowRepository.updateWorkflowInstance(workflowInstance);
+            }
+
+        } else {
+            throw new WorkflowException("No such task id: "+ taskId + " for instance: " + workflowInstance.getId());
+        }
+    }
+
+
+    /**
+     * Used to signal whether to proceed after execution.
+     *
+     * EXECUTE_AND_PROCEED in one step.
+     * or
+     * EXECUTE_AND_WAIT and PROCEED in two steps.
+     */
+    public enum Signal {
+        EXECUTE_AND_PROCEED, // Execute the task and compute next tasks
+        EXECUTE_AND_WAIT, // Execute and wait
+        PROCEED, // Compute next tasks
     }
 }

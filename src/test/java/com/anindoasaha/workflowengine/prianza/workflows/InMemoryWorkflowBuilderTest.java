@@ -5,7 +5,7 @@ import com.anindoasaha.workflowengine.prianza.api.impl.WorkflowServiceImpl;
 import com.anindoasaha.workflowengine.prianza.bo.Task;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
-import com.anindoasaha.workflowengine.prianza.bo.impl.SimpleWorkflowBuilder;
+import com.anindoasaha.workflowengine.prianza.bo.impl.simple.SimpleWorkflow;
 import com.anindoasaha.workflowengine.prianza.data.impl.InMemoryWorkflowRepositoryImpl;
 import com.anindoasaha.workflowengine.prianza.task.StdOutTask;
 import org.junit.Test;
@@ -16,11 +16,11 @@ import java.util.Map;
 
 public class InMemoryWorkflowBuilderTest {
 
-    private SimpleWorkflowBuilder workflowBuilder = null;
+    private SimpleWorkflow.Builder workflowBuilder = null;
 
     @Test
     public void testOneStepStatelessWorkflow() {
-        workflowBuilder = new SimpleWorkflowBuilder("OneStepStatelessWorkflow");
+        workflowBuilder = new SimpleWorkflow.Builder("OneStepStatelessWorkflow");
         Task task = new StdOutTask("Hello, world!");
 
         workflowBuilder.addTask(task);
@@ -39,7 +39,7 @@ public class InMemoryWorkflowBuilderTest {
 
     @Test
     public void testOneStepStatefulWorkflow() {
-        workflowBuilder = new SimpleWorkflowBuilder("OneStepStatefulWorkflow");
+        workflowBuilder = new SimpleWorkflow.Builder("OneStepStatefulWorkflow");
         Task task = new StdOutTask("Default message");
 
         workflowBuilder.addTask(task);
@@ -58,7 +58,7 @@ public class InMemoryWorkflowBuilderTest {
 
     @Test
     public void testTwoStepStatefulWorkflow() {
-        workflowBuilder = new SimpleWorkflowBuilder("TwoStepStatefulWorkflow");
+        workflowBuilder = new SimpleWorkflow.Builder("TwoStepStatefulWorkflow");
         Task task1 = new StdOutTask("Default message 1");
         Task task2 = new StdOutTask("Default message 2");
 
@@ -84,7 +84,7 @@ public class InMemoryWorkflowBuilderTest {
 
     @Test
     public void testThreeStepStatefulWorkflow() {
-        workflowBuilder = new SimpleWorkflowBuilder("ThreeStepStatefulWorkflow");
+        workflowBuilder = new SimpleWorkflow.Builder("ThreeStepStatefulWorkflow");
         Task task1 = new StdOutTask("Default message 1");
         Task task2 = new StdOutTask("Default message 2");
         Task task3 = new StdOutTask("Default message 3");
@@ -112,7 +112,7 @@ public class InMemoryWorkflowBuilderTest {
 
     @Test
     public void testThreeStepFanInStatefulWorkflow() {
-        workflowBuilder = new SimpleWorkflowBuilder("ThreeStepStatefulWorkflow");
+        workflowBuilder = new SimpleWorkflow.Builder("ThreeStepStatefulWorkflow");
         Task task1 = new StdOutTask("Default message 1");
         Task task2 = new StdOutTask("Default message 2");
         Task task3 = new StdOutTask("Default message 3");

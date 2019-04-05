@@ -3,6 +3,7 @@ package com.anindoasaha.workflowengine.prianza.api;
 import com.anindoasaha.workflowengine.prianza.bo.Workflow;
 import com.anindoasaha.workflowengine.prianza.bo.WorkflowInstance;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,4 +47,5 @@ public interface WorkflowService {
 
     void executeWorkflowInstance(WorkflowInstance workflowInstance, String taskId, Map<String, String> parameters);
 
+    void proceedWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> parameters);
 }
