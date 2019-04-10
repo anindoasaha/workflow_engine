@@ -4,7 +4,7 @@
 - [ ] Control nodes
 - [ ] Composite nodes
     - [X] Single Instance
-    - [ ] Multiple Instance
+    - [X] Multiple Instance
 - [ ] Wait and notify 
 - [ ] Task execution output to next task in addition to state updates
 - [ ] Automated task execution, based on task type and if input is required.

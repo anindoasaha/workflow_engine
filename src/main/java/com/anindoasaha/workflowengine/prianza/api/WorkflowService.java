@@ -48,4 +48,6 @@ public interface WorkflowService {
     void executeWorkflowInstance(WorkflowInstance workflowInstance, String taskId, Map<String, String> parameters);
 
     void proceedWorkflowInstance(WorkflowInstance workflowInstance, Map<String, String> parameters);
+
+    void proceedWorkflowInstance(String workflowInstanceId, String taskId, Map<String, String> parameters);
 }

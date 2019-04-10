@@ -59,6 +59,13 @@ public class Parser {
         subparserRun.addArgument("-s", "--signal").required(false);
         subparserRun.addArgument("-v", "--vars").nargs("*");
 
+        // Proceed
+        Subparser subparserProceed = subparsers.addParser("proceed").help("-h");
+        subparserProceed.addArgument("-i", "--instance-id").required(true);
+        subparserProceed.addArgument("-t", "--task-id").required(true);
+        subparserProceed.addArgument("-s", "--signal").required(false);
+        subparserProceed.addArgument("-v", "--vars").nargs("*");
+
         Namespace namespace = null;
         try {
             namespace = argumentParser.parseArgs(args);
@@ -83,9 +90,9 @@ public class Parser {
                 case "list":
                     Boolean instanceId = namespace.getBoolean("instance_id");
                     if (instanceId != null && instanceId) {
-                        Map<String, String> workflows = workflowService.listWorkflows();
+                        Map<String, String> workflowInstances = workflowService.listWorkflowInstances();
                         System.out.println("Workflows: ");
-                        for (Map.Entry<String, String> entry : workflows.entrySet()) {
+                        for (Map.Entry<String, String> entry : workflowInstances.entrySet()) {
                             System.out.println(entry.getValue() + " : " + entry.getKey());
                         }
                     } else {
@@ -127,6 +134,16 @@ public class Parser {
 
                     // Read task variables
                     workflowService.executeWorkflowInstance(workflowInstanceId, taskId, convertToMap(vars));
+                    break;
+                case "proceed":
+                    workflowInstanceId = namespace.getString("instance_id");
+                    String proceedTaskId = namespace.getString("task_id");
+                    vars = namespace.getList("vars");
+                    instance = workflowService.getWorkflowInstanceByWorkflowInstanceId(workflowInstanceId);
+
+                    // Read task variables
+                    workflowService.proceedWorkflowInstance(workflowInstanceId, proceedTaskId, convertToMap(vars));
+
                     break;
             }
         }

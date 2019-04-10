@@ -199,6 +199,12 @@ public class WorkflowServiceImpl implements WorkflowService {
         proceedWorkflowInstance(workflowInstance, workflowInstance.getCurrentTaskIds().get(0), parameters);
     }
 
+    @Override
+    public void proceedWorkflowInstance(String workflowInstanceId, String taskId, Map<String, String> parameters) {
+        WorkflowInstance workflowInstance = getWorkflowInstanceByWorkflowInstanceId(workflowInstanceId);
+        proceedWorkflowInstance(workflowInstance, taskId, parameters);
+    }
+
     public void proceedWorkflowInstance(WorkflowInstance workflowInstance, String taskId,  Map<String, String> parameters) {
         if(workflowInstance.getCurrentTaskIds().contains(taskId)) {
             workflowInstance.setWorkflowInstanceStatus(WorkflowInstance.WORKFLOW_INSTANCE_IN_PROCESS);
