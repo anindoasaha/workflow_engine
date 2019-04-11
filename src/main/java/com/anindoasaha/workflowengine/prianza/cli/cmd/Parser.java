@@ -91,13 +91,13 @@ public class Parser {
                     Boolean instanceId = namespace.getBoolean("instance_id");
                     if (instanceId != null && instanceId) {
                         Map<String, String> workflowInstances = workflowService.listWorkflowInstances();
-                        System.out.println("Workflows: ");
+                        System.out.println("Workflow Instances: ");
                         for (Map.Entry<String, String> entry : workflowInstances.entrySet()) {
                             System.out.println(entry.getValue() + " : " + entry.getKey());
                         }
                     } else {
                         Map<String, String> workflows = workflowService.listWorkflows();
-                        System.out.println("Workflows: ");
+                        System.out.println("Workflow: ");
                         for (Map.Entry<String, String> entry : workflows.entrySet()) {
                             System.out.println(entry.getValue() + " : " + entry.getKey());
                         }
